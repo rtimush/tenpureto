@@ -7,10 +7,8 @@ import           Polysemy.Error
 import           Polysemy.Resource
 
 import           Options.Applicative
-import           Data.Semigroup                 ( (<>) )
 import           Data.Foldable
 import           Data.Maybe
-import           Data.Text                      ( Text )
 import qualified Data.Set                      as Set
 import           Data.Version
 import           Data.Functor

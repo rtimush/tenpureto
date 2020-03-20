@@ -14,7 +14,6 @@ import           Data.Maybe
 import           Data.Either
 import           Data.Either.Combinators        ( rightToMaybe )
 import qualified Data.ByteString.Lazy          as BS
-import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
 import qualified Data.Set                      as Set
 import           Data.Foldable
@@ -595,9 +594,6 @@ runTemplateChange template interactive changeMode changesNature f =
                 if shouldPush
                     then pushRefsToServer changeMode changes
                     else throw CancelledException
-
-try :: Member (Error e) r => Sem r a -> Sem r (Either e a)
-try f = catch (Right <$> f) (return . Left)
 
 commitMessagePattern :: Text
 commitMessagePattern = "^Template: .*$"

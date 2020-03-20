@@ -12,29 +12,29 @@ packages:
   original:
     hackage: hedgehog-classes-0.2.4.1
 - completed:
-    hackage: polysemy-1.2.2.0@sha256:20e278d6e2f16b79634864e6d3b1457b479378b058fd96c6135d8f48ba2306db,5776
+    hackage: polysemy-1.3.0.0@sha256:bf1d559c7e26e8a0ed31fc45d84635e329a4a31bfd39e713a39adf639bcbd309,6141
     pantry-tree:
-      size: 3622
-      sha256: 12f504ac889727c61c686ce184ca55f67b129489fc7a030810db2d000a6c81ca
+      size: 4309
+      sha256: 770af8c91981ccb8fe388ba62897fdf4eb394df433ab10def66d6e111b6f09f7
   original:
-    hackage: polysemy-1.2.2.0
+    hackage: polysemy-1.3.0.0
 - completed:
-    hackage: polysemy-plugin-0.2.3.0@sha256:f3d7e3eb685deb590928367e663783352e07d14fc1ca93abb7f204e063c56a1f,2697
+    hackage: polysemy-plugin-0.2.5.0@sha256:67e30be568a141b852aace1a60e180cb5060fbb2835365a81a3ea779536d6d35,2952
     pantry-tree:
-      size: 1230
-      sha256: 3f5d41e30ed3cb19636243c1351c23b0159734ac99735133dbf58d75373036cd
+      size: 1232
+      sha256: 5c90dac2eba48b4e337b302347c233ecaedb63e333641e094e718a548ac86711
   original:
-    hackage: polysemy-plugin-0.2.3.0
+    hackage: polysemy-plugin-0.2.5.0
 - completed:
-    hackage: algebraic-graphs-0.5@sha256:6eeec5ed1687ff7aa916e7bf9f02f51aaabde6f314dc0b7b1a84156974d7da73,8071
+    hackage: ghc-tcplugins-extra-0.3.2@sha256:1bbfd4449c3669a31618ea0ebc5d00d980a53988daad3b6218bab5c8cdff268d,1687
     pantry-tree:
-      size: 4128
-      sha256: cca4a0348bb126506cacd8436948a68aad62e75d45df8c71f4090a00e69b45ee
+      size: 331
+      sha256: 4b16989344380c912e476dc232cc58264837b498e31a8bf16a17092ba6c1cfb9
   original:
-    hackage: algebraic-graphs-0.5
+    hackage: ghc-tcplugins-extra-0.3.2
 snapshots:
 - completed:
-    size: 524996
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/27.yaml
-    sha256: 7ea31a280c56bf36ff591a7397cc384d0dff622e7f9e4225b47d8980f019a0f0
-  original: lts-14.27
+    size: 491389
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/15/7.yaml
+    sha256: 92ab6303fe20ec928461c82ce0980b4d17c06f4e66205a2967e476474f686c17
+  original: lts-15.7

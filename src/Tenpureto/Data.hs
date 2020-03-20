@@ -1,6 +1,5 @@
 module Tenpureto.Data where
 
-import           Data.Text                      ( Text )
 import           Data.Set                       ( Set )
 
 import           Control.Applicative

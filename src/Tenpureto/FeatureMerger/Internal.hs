@@ -1,6 +1,5 @@
 module Tenpureto.FeatureMerger.Internal where
 
-import           Data.Text                      ( Text )
 import           Data.Map                       ( Map )
 import           Data.Text.Prettyprint.Doc
 import           Data.Text.Prettyprint.Doc.Render.Text

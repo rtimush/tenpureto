@@ -2,7 +2,6 @@
 
 module Tenpureto.Internal where
 
-import           Data.Text                      ( Text )
 import           Data.Text.Prettyprint.Doc
 import           Algebra.Graph.Export.Dot
 

@@ -28,7 +28,6 @@ import           Data.Maybe
 import           Data.Either.Combinators
 import           Data.ByteString.Lazy           ( ByteString )
 import qualified Data.ByteString.Lazy          as BS
-import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc
 import           Data.Set                       ( Set )

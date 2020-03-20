@@ -13,7 +13,6 @@ where
 import           Data.Maybe                     ( fromJust )
 import           Data.List                      ( sortOn
                                                 , find
-                                                , filter
                                                 )
 import           Data.List.NonEmpty             ( NonEmpty(..) )
 import           Data.Set                       ( Set )
