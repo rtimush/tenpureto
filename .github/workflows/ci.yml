@@ -70,6 +70,8 @@ jobs:
   build-x86_64-linux:
     runs-on: ubuntu-latest
     steps:
+      - name: Cleanup
+        run: sudo rm -rf /usr/local/lib/android /opt/ghc
       - uses: actions/checkout@v2
       - uses: cachix/install-nix-action@v8
       - name: Build

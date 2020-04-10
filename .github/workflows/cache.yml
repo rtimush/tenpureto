@@ -15,6 +15,8 @@ jobs:
         os: [ubuntu-latest, macos-latest]
       fail-fast: false
     steps:
+      - name: Cleanup
+        run: sudo rm -rf /usr/local/lib/android /opt/ghc
       - uses: actions/checkout@v2
       - uses: cachix/install-nix-action@v8
       - uses: cachix/cachix-action@v5
@@ -26,6 +28,8 @@ jobs:
     if: github.repository == 'tenpureto/tenpureto'
     runs-on: ubuntu-latest
     steps:
+      - name: Cleanup
+        run: sudo rm -rf /usr/local/lib/android /opt/ghc
       - uses: actions/checkout@v2
       - uses: cachix/install-nix-action@v8
       - uses: cachix/cachix-action@v5
