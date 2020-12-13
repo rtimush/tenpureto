@@ -84,14 +84,36 @@
         };
 
     in {
-      packages.x86_64-darwin = { tenpureto = drv "x86_64-darwin"; };
-      packages.x86_64-linux = {
+      packages.x86_64-darwin = { # #
+        tenpureto = drv "x86_64-darwin";
+      };
+      packages.x86_64-linux = { # #
         tenpureto = drv "x86_64-linux";
         tenpureto-static = staticDrv "x86_64-linux";
       };
 
       defaultPackage.x86_64-darwin = self.packages.x86_64-darwin.tenpureto;
       defaultPackage.x86_64-linux = self.packages.x86_64-linux.tenpureto;
+
+      apps.x86_64-darwin = {
+        tenpureto = {
+          type = "app";
+          program = "${self.defaultPackage.x86_64-darwin}/bin/tenpureto";
+        };
+      };
+
+      apps.x86_64-linux = {
+        tenpureto = {
+          type = "app";
+          program = "${self.defaultPackage.x86_64-linux}/bin/tenpureto";
+        };
+      };
+
+      defaultApp.x86_64-darwin = self.apps.x86_64-darwin.tenpureto;
+      defaultApp.x86_64-linux = self.apps.x86_64-linux.tenpureto;
+
+      devShell.x86_64-darwin = shell "x86_64-darwin";
+      devShell.x86_64-linux = shell "x86_64-linux";
     };
 
 }
