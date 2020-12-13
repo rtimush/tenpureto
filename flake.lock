@@ -1,0 +1,26 @@
+{
+  "nodes": {
+    "haskell": {
+      "locked": {
+        "lastModified": 1607822036,
+        "narHash": "sha256-dz+N3CHb88DoG1+MQQSI5QYDqH4yKK6uB8BVNJgbKn4=",
+        "owner": "input-output-hk",
+        "repo": "haskell.nix",
+        "rev": "5bb7fb0e73156a3856301a8994fad04f0b314e0d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "input-output-hk",
+        "repo": "haskell.nix",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "haskell": "haskell"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
