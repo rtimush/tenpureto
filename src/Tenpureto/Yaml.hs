@@ -2,20 +2,19 @@ module Tenpureto.Yaml
     ( fromByteString
     , toByteString
     , prettyPrintYamlParseException
-    )
-where
+    ) where
 
+import           Control.Exception              ( try )
+import           Data.ByteString                ( ByteString )
+import           Data.Conduit                   ( (.|)
+                                                , runConduitRes
+                                                )
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
-import           Data.ByteString                ( ByteString )
-import           Data.Conduit                   ( runConduitRes
-                                                , (.|)
-                                                )
-import           Data.Yaml.Parser
 import           Data.Yaml.Builder
-import qualified Text.Libyaml                  as LY
-import           Control.Exception              ( try )
+import           Data.Yaml.Parser
 import           System.IO.Unsafe               ( unsafePerformIO )
+import qualified Text.Libyaml                  as LY
 
 fromByteString :: FromYaml a => ByteString -> Either YamlParseException a
 fromByteString bs = unsafePerformIO $ try (readByteString bs)

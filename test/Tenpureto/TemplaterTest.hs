@@ -8,8 +8,8 @@ import           Test.Tasty.HUnit
 import           Polysemy
 import           Polysemy.Error
 
-import qualified Data.Set                      as Set
 import qualified Control.Exception             as E
+import qualified Data.Set                      as Set
 
 import           Path
 
@@ -163,7 +163,8 @@ test_excludes =
             $ assertNotMatches "[" [relfile|a|]
         ]
 
-data NotImplemented = NotImplemented deriving (Eq, Show)
+data NotImplemented = NotImplemented
+    deriving (Eq, Show)
 instance E.Exception NotImplemented
 
 runFileSystemPure
@@ -194,5 +195,5 @@ runFileSystemPure = reinterpret $ \case
     throwE :: E.Exception e => e -> Sem (Error E.SomeException ': r) a
     throwE e = throw $ E.SomeException e
 
-runTest :: Sem '[Logging, FileSystem, Error String] a -> Either String a
+runTest :: Sem '[Logging , FileSystem , Error String] a -> Either String a
 runTest = run . runError . mapError show . runFileSystemPure . runNoLogging

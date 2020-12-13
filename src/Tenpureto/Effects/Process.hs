@@ -4,31 +4,30 @@ module Tenpureto.Effects.Process
     ( module Tenpureto.Effects.Process
     , NonEmpty(..)
     , ExitCode(..)
-    )
-where
+    ) where
 
 import           Polysemy
 
-import           Data.List.NonEmpty             ( NonEmpty(..) )
 import           Data.ByteString.Lazy           ( ByteString )
 import qualified Data.ByteString.Lazy          as BS
+import           Data.List.NonEmpty             ( NonEmpty(..) )
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
 import qualified Data.Text.Encoding            as E
 
 import           Path
 import           System.Exit                    ( ExitCode(..) )
-import           System.Process.Typed           ( readProcess
-                                                , runProcess
-                                                , runProcess_
-                                                , setStdin
-                                                , setStdout
-                                                , setStderr
+import           System.Process.Typed           ( byteStringInput
                                                 , closed
                                                 , inherit
-                                                , byteStringInput
-                                                , setWorkingDir
                                                 , proc
+                                                , readProcess
+                                                , runProcess
+                                                , runProcess_
+                                                , setStderr
+                                                , setStdin
+                                                , setStdout
+                                                , setWorkingDir
                                                 , shell
                                                 )
 
@@ -68,7 +67,8 @@ runProcessIO = interpret $ \case
         embed $ runProcess_ $ setWorkingDir (toFilePath dir) $ shell "$SHELL"
 
 
-withProcessLogging :: (Member Logging r, Member Process r) => Sem r a -> Sem r a
+withProcessLogging
+    :: (Member Logging r, Member Process r) => Sem r a -> Sem r a
 withProcessLogging = intercept $ \case
 
     RunCmd (cmd :| args) -> do

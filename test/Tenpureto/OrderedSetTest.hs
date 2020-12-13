@@ -1,14 +1,14 @@
 module Tenpureto.OrderedSetTest where
 
-import           Test.Tasty
-import           Test.Tasty.HUnit
-import           Test.Tasty.Hedgehog
 import           Hedgehog
 import qualified Hedgehog.Gen                  as Gen
 import qualified Hedgehog.Range                as Range
+import           Test.Tasty
+import           Test.Tasty.HUnit
+import           Test.Tasty.Hedgehog
 
-import           Data.List                      ( sort
-                                                , isSubsequenceOf
+import           Data.List                      ( isSubsequenceOf
+                                                , sort
                                                 )
 import qualified Data.Set                      as Set
 

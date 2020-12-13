@@ -14,8 +14,7 @@ module Tenpureto.Effects.FileSystem
     , toFilePath
     , parent
     , filename
-    )
-where
+    ) where
 
 import           Polysemy
 import           Polysemy.Resource
@@ -57,7 +56,7 @@ makeSem ''FileSystem
 
 
 withSystemTempDir
-    :: Members '[FileSystem, Resource] r
+    :: Members '[FileSystem , Resource] r
     => FilePath
     -> (Path Abs Dir -> Sem r a)
     -> Sem r a

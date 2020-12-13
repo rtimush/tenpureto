@@ -6,25 +6,25 @@ import           Polysemy
 import           Polysemy.Error
 import           Polysemy.Resource
 
-import           Options.Applicative
 import           Data.Foldable
+import           Data.Functor
 import           Data.Maybe
 import qualified Data.Set                      as Set
 import           Data.Version
-import           Data.Functor
+import           Options.Applicative
 
 import           System.Exit
 
+import           Tenpureto
 import           Tenpureto.Data
-import qualified Tenpureto.OrderedMap          as OrderedMap
+import           Tenpureto.Effects.FileSystem
 import           Tenpureto.Effects.Git
 import           Tenpureto.Effects.Logging
-import           Tenpureto.Effects.Terminal
-import           Tenpureto.Effects.FileSystem
 import           Tenpureto.Effects.Process
+import           Tenpureto.Effects.Terminal
 import           Tenpureto.Effects.UI
+import qualified Tenpureto.OrderedMap          as OrderedMap
 import           Tenpureto.TemplateLoader
-import           Tenpureto
 
 import           Paths_tenpureto                ( version )
 
@@ -395,7 +395,7 @@ runAppM withDebug unattended =
         . runGitHub
 
 runTenpuretoException
-    :: Members '[Embed IO, Terminal] r
+    :: Members '[Embed IO , Terminal] r
     => Sem r (Either TenpuretoException a)
     -> Sem r a
 runTenpuretoException = (=<<) handleResult
@@ -406,14 +406,15 @@ runTenpuretoException = (=<<) handleResult
         embed $ exitWith (ExitFailure 1)
 
 runUI
-    :: Members '[FileSystem, Terminal, TerminalInput, Error UIException] r
+    :: Members '[FileSystem , Terminal , TerminalInput , Error UIException] r
     => Bool
     -> Sem (UI ': r) a
     -> Sem r a
 runUI False = runUIInTerminal
 runUI True  = runUIUnattended
 
-runCommand :: Members '[Terminal, Resource, Embed IO] r => Command -> Sem r ()
+runCommand
+    :: Members '[Terminal , Resource , Embed IO] r => Command -> Sem r ()
 runCommand Create { maybeTemplateName = t, maybeTargetDirectory = td, maybeProjectConfiguration = c, runUnattended = u, enableDebugLogging = d }
     = runAppM d u $ do
         resolvedTd <- traverse resolveDir td
@@ -508,7 +509,8 @@ runCommand TemplateListConflicts { templateName = t, enableDebugLogging = d } =
 runCommand TemplateChangeVariable { templateName = t, oldVariableValue = ov, newVariableValue = nv, enableInteractivity = i, enableDebugLogging = d }
     = runAppM d False $ changeTemplateVariableValue t ov nv i
 
-runOptParser :: Members '[Terminal, Resource, Embed IO, Final IO] r => Sem r ()
+runOptParser
+    :: Members '[Terminal , Resource , Embed IO , Final IO] r => Sem r ()
 runOptParser = do
     w <- fromMaybe 80 <$> terminalWidth
     let p = prefs (showHelpOnEmpty <> columns w)

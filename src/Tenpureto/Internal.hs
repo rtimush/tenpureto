@@ -2,8 +2,8 @@
 
 module Tenpureto.Internal where
 
-import           Data.Text.Prettyprint.Doc
 import           Algebra.Graph.Export.Dot
+import           Data.Text.Prettyprint.Doc
 
 import           Tenpureto.Effects.Git
 import           Tenpureto.Effects.UI

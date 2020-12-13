@@ -3,42 +3,41 @@
 module Tenpureto
     ( module Tenpureto
     , TenpuretoException(..)
-    )
-where
+    ) where
 
 import           Polysemy
 import           Polysemy.Error
 import           Polysemy.Resource
 
-import           Data.Maybe
-import           Data.Either
-import           Data.Either.Combinators        ( rightToMaybe )
-import qualified Data.ByteString.Lazy          as BS
-import qualified Data.Text                     as T
-import qualified Data.Set                      as Set
-import           Data.Foldable
-import           Data.Functor
+import qualified Algebra.Graph.Export.Dot      as Dot
 import           Control.Applicative
 import           Data.Attoparsec.Text    hiding ( try )
-import qualified Algebra.Graph.Export.Dot      as Dot
+import qualified Data.ByteString.Lazy          as BS
+import           Data.Either
+import           Data.Either.Combinators        ( rightToMaybe )
+import           Data.Foldable
+import           Data.Functor
+import           Data.Maybe
+import qualified Data.Set                      as Set
+import qualified Data.Text                     as T
 
 import           Tenpureto.Data
-import           Tenpureto.Messages
-import           Tenpureto.Graph
-import           Tenpureto.Effects.Logging
-import           Tenpureto.Effects.Terminal
 import           Tenpureto.Effects.FileSystem
-import           Tenpureto.Effects.Process
 import           Tenpureto.Effects.Git
+import           Tenpureto.Effects.Logging
+import           Tenpureto.Effects.Process
+import           Tenpureto.Effects.Terminal
 import           Tenpureto.Effects.UI
 import           Tenpureto.FeatureMerger
-import           Tenpureto.TemplateLoader
-import           Tenpureto.Templater
+import           Tenpureto.Graph
 import           Tenpureto.Internal
-import           Tenpureto.OrderedSet           ( OrderedSet )
-import qualified Tenpureto.OrderedSet          as OrderedSet
+import           Tenpureto.Messages
 import           Tenpureto.OrderedMap           ( OrderedMap )
 import qualified Tenpureto.OrderedMap          as OrderedMap
+import           Tenpureto.OrderedSet           ( OrderedSet )
+import qualified Tenpureto.OrderedSet          as OrderedSet
+import           Tenpureto.TemplateLoader
+import           Tenpureto.Templater
 
 data RemoteChangeMode = PushDirectly
                       | UpstreamPullRequest { pullRequestSettings :: PullRequestSettings }
@@ -57,8 +56,14 @@ buildTemplaterSettings yaml cfg = TemplaterSettings
 
 createProject
     :: Members
-           '[Git, UI, FileSystem, Terminal, Logging, Resource, Error
-               TenpuretoException]
+           '[ Git
+            , UI
+            , FileSystem
+            , Terminal
+            , Logging
+            , Resource
+            , Error TenpuretoException
+            ]
            r
     => PreliminaryProjectConfiguration
     -> Sem r ()
@@ -88,8 +93,14 @@ createProject projectConfiguration =
 
 updateProject
     :: Members
-           '[Git, UI, Terminal, FileSystem, Logging, Resource, Error
-               TenpuretoException]
+           '[ Git
+            , UI
+            , Terminal
+            , FileSystem
+            , Logging
+            , Resource
+            , Error TenpuretoException
+            ]
            r
     => PreliminaryProjectConfiguration
     -> Sem r ()
@@ -177,8 +188,14 @@ updateProject projectConfiguration = do
 
 showLog
     :: Members
-           '[Git, UI, Terminal, FileSystem, Logging, Resource, Error
-               TenpuretoException]
+           '[ Git
+            , UI
+            , Terminal
+            , FileSystem
+            , Logging
+            , Resource
+            , Error TenpuretoException
+            ]
            r
     => PreliminaryProjectConfiguration
     -> ShowLogMode
@@ -192,9 +209,9 @@ showLog projectConfiguration logMode = do
     withPreparedTemplate projectConfiguration
         $ \template _ _ _ _ mergedHeads ->
               let previousHeads =
-                          case fold (prePreviousMergedHeads projectConfiguration) of
-                              [] -> throw TenpuretoNoPreviousMergedHeads
-                              hs -> return hs
+                      case fold (prePreviousMergedHeads projectConfiguration) of
+                          [] -> throw TenpuretoNoPreviousMergedHeads
+                          hs -> return hs
                   currentHeads = OrderedSet.toList mergedHeads
               in  do
                       (include, exclude) <- case logMode of
@@ -227,8 +244,14 @@ copyTemplate settings yaml repo dst = do
 
 withPreparedTemplate
     :: Members
-           '[Git, UI, Terminal, Logging, FileSystem, Resource, Error
-               TenpuretoException]
+           '[ Git
+            , UI
+            , Terminal
+            , Logging
+            , FileSystem
+            , Resource
+            , Error TenpuretoException
+            ]
            r
     => PreliminaryProjectConfiguration
     -> (  GitRepository
@@ -281,7 +304,7 @@ withPreparedTemplate projectConfiguration block = do
                     mergedHeads
 
 loadExistingProjectConfiguration
-    :: Members '[Git, Logging] r
+    :: Members '[Git , Logging] r
     => Path Abs Dir
     -> Sem r PreliminaryProjectConfiguration
 loadExistingProjectConfiguration projectPath =
@@ -310,7 +333,7 @@ loadExistingProjectConfiguration projectPath =
             }
 
 prepareTemplate
-    :: Members '[Git, UI, Terminal, Logging, Error TenpuretoException] r
+    :: Members '[Git , UI , Terminal , Logging , Error TenpuretoException] r
     => GitRepository
     -> TemplateInformation
     -> FinalProjectConfiguration
@@ -336,8 +359,13 @@ prepareTemplate repository template configuration =
 
 generateTemplateGraph
     :: Members
-           '[Git, Terminal, FileSystem, Logging, Resource, Error
-               TenpuretoException]
+           '[ Git
+            , Terminal
+            , FileSystem
+            , Logging
+            , Resource
+            , Error TenpuretoException
+            ]
            r
     => Text
     -> BranchFilter
@@ -353,8 +381,13 @@ generateTemplateGraph template branchFilter =
 
 listTemplateBranches
     :: Members
-           '[Git, Terminal, FileSystem, Logging, Resource, Error
-               TenpuretoException]
+           '[ Git
+            , Terminal
+            , FileSystem
+            , Logging
+            , Resource
+            , Error TenpuretoException
+            ]
            r
     => Text
     -> BranchFilter
@@ -367,8 +400,16 @@ listTemplateBranches template branchFilter =
 
 renameTemplateBranch
     :: Members
-           '[Git, GitServer, UI, Terminal, FileSystem, Process, Logging, Resource, Error
-               TenpuretoException]
+           '[ Git
+            , GitServer
+            , UI
+            , Terminal
+            , FileSystem
+            , Process
+            , Logging
+            , Resource
+            , Error TenpuretoException
+            ]
            r
     => Text
     -> Text
@@ -414,8 +455,16 @@ renameTemplateBranch template oldBranch newBranch interactive =
 
 propagateTemplateBranchChanges
     :: Members
-           '[Git, GitServer, UI, Terminal, FileSystem, Process, Logging, Resource, Error
-               TenpuretoException]
+           '[ Git
+            , GitServer
+            , UI
+            , Terminal
+            , FileSystem
+            , Process
+            , Logging
+            , Resource
+            , Error TenpuretoException
+            ]
            r
     => Text
     -> BranchFilter
@@ -438,8 +487,14 @@ propagateTemplateBranchChanges template branchFilter pushMode =
 
 listTemplateConflicts
     :: Members
-           '[Git, UI, Terminal, FileSystem, Logging, Resource, Error
-               TenpuretoException]
+           '[ Git
+            , UI
+            , Terminal
+            , FileSystem
+            , Logging
+            , Resource
+            , Error TenpuretoException
+            ]
            r
     => Text
     -> Sem r ()
@@ -470,8 +525,16 @@ listTemplateConflicts template =
 
 changeTemplateVariableValue
     :: Members
-           '[Git, GitServer, UI, Terminal, FileSystem, Process, Logging, Resource, Error
-               TenpuretoException]
+           '[ Git
+            , GitServer
+            , UI
+            , Terminal
+            , FileSystem
+            , Process
+            , Logging
+            , Resource
+            , Error TenpuretoException
+            ]
            r
     => Text
     -> Text
@@ -512,8 +575,16 @@ changeTemplateVariableValue template oldValue newValue interactive =
 
 runTemplateChange
     :: Members
-           '[Git, GitServer, UI, Terminal, Process, FileSystem, Logging, Resource, Error
-               TenpuretoException]
+           '[ Git
+            , GitServer
+            , UI
+            , Terminal
+            , Process
+            , FileSystem
+            , Logging
+            , Resource
+            , Error TenpuretoException
+            ]
            r
     => Text
     -> Bool
@@ -527,8 +598,10 @@ runTemplateChange template interactive changeMode changesNature f =
                 ExistingChanges -> gitLog
                 NewChanges      -> gitLogDiff
         let confirmUpdate src (BranchRef ref) = do
-                msg <- changesForBranchMessage ref
-                    <$> diff repo src (Committish $ "remotes/origin/" <> ref)
+                msg <- changesForBranchMessage ref <$> diff
+                    repo
+                    src
+                    (Committish $ "remotes/origin/" <> ref)
                 sayLn msg
                 if not interactive
                     then return src

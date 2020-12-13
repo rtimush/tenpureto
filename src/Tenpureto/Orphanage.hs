@@ -2,16 +2,16 @@
 
 module Tenpureto.Orphanage where
 
-import qualified Data.Text                     as T
-import           Data.Set                       ( Set )
-import qualified Data.Set                      as Set
 import           Data.Map                       ( Map )
 import qualified Data.Map                      as Map
+import           Data.Set                       ( Set )
+import qualified Data.Set                      as Set
+import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc
-import           Path
 import           Data.Yaml.Parser               ( FromYaml(..)
                                                 , withText
                                                 )
+import           Path
 
 instance Pretty (Path a t) where
     pretty = pretty . toFilePath

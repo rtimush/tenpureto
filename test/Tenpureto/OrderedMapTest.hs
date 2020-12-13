@@ -1,10 +1,10 @@
 module Tenpureto.OrderedMapTest where
 
-import           Test.Tasty
-import           Test.Tasty.HUnit
 import           Hedgehog
 import qualified Hedgehog.Gen                  as Gen
 import qualified Hedgehog.Range                as Range
+import           Test.Tasty
+import           Test.Tasty.HUnit
 
 import           Control.Applicative
 import qualified Data.Map                      as Map
@@ -22,7 +22,8 @@ genUniqueListIntString range =
         )
         >>= Gen.shuffle
 
-genOrderedMapIntString :: (MonadGen m) => Range Int -> m (OrderedMap Int String)
+genOrderedMapIntString
+    :: (MonadGen m) => Range Int -> m (OrderedMap Int String)
 genOrderedMapIntString range = fromList <$> genUniqueListIntString range
 
 hprop_preservesElements :: Property

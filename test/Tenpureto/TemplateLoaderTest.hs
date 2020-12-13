@@ -1,21 +1,21 @@
 module Tenpureto.TemplateLoaderTest where
 
-import           Test.Tasty
-import           Test.Tasty.HUnit
 import           Hedgehog
 import qualified Hedgehog.Gen                  as Gen
 import qualified Hedgehog.Range                as Range
+import           Test.Tasty
+import           Test.Tasty.HUnit
 
+import           Control.Applicative
+import qualified Data.Set                      as Set
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
-import qualified Data.Set                      as Set
-import           Control.Applicative
 
 import           Tenpureto.Graph
-import           Tenpureto.TemplateTestHelper
+import qualified Tenpureto.OrderedMap          as OrderedMap
 import           Tenpureto.TemplateLoader
 import           Tenpureto.TemplateLoader.Internal
-import qualified Tenpureto.OrderedMap          as OrderedMap
+import           Tenpureto.TemplateTestHelper
 
 test_managedBranches :: [TestTree]
 test_managedBranches =

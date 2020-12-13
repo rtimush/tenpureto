@@ -5,38 +5,38 @@ module Tenpureto.Effects.Git.Internal where
 import           Polysemy
 import           Polysemy.Error
 
-import           Data.Maybe
-import           Data.Either
+import           Control.Applicative
+import           Control.Monad
+import           Data.Aeson                     ( (.!=)
+                                                , (.:)
+                                                , (.:?)
+                                                , (.=)
+                                                , FromJSON
+                                                , ToJSON
+                                                )
+import qualified Data.Aeson                    as Aeson
 import           Data.ByteString.Lazy           ( ByteString )
 import qualified Data.ByteString.Lazy          as BS
+import           Data.Either
+import           Data.FileEmbed
+import           Data.Functor
+import           Data.Maybe
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
 import qualified Data.Text.Encoding            as E
 import           Data.Text.Prettyprint.Doc
+import qualified Path                          as Path
 import           Text.Parsec                    ( ParsecT
-                                                , parse
-                                                , choice
-                                                , many1
                                                 , alphaNum
-                                                , char
                                                 , anyChar
+                                                , char
+                                                , choice
                                                 , eof
+                                                , many1
+                                                , parse
                                                 , parserFail
                                                 , parserReturn
                                                 )
-import           Control.Applicative
-import           Control.Monad
-import           Data.Aeson                     ( FromJSON
-                                                , ToJSON
-                                                , (.=)
-                                                , (.:)
-                                                , (.:?)
-                                                , (.!=)
-                                                )
-import qualified Data.Aeson                    as Aeson
-import           Data.FileEmbed
-import           Data.Functor
-import qualified Path                          as Path
 
 import           Tenpureto.Effects.FileSystem
 import           Tenpureto.Effects.Process
@@ -116,7 +116,7 @@ asFirstLineText
 asFirstLineText = fmap listToMaybe . asLines
 
 asFiles
-    :: Members '[FileSystem, Error GitException] r
+    :: Members '[FileSystem , Error GitException] r
     => CmdResult
     -> Sem r [Path Rel File]
 asFiles = traverse (parseRelFile . T.unpack) <=< asLines
@@ -153,13 +153,13 @@ gitRepoCmd (GitRepository path) cmd =
     gitCmd (map T.pack ["-C", toFilePath path] ++ cmd)
 
 gitInteractiveCmd
-    :: Members '[Process, Error GitException] r => [Text] -> Sem r ()
+    :: Members '[Process , Error GitException] r => [Text] -> Sem r ()
 gitInteractiveCmd cmd = runInteractiveCmd ("git" :| cmd) >>= \case
     ExitSuccess      -> return ()
     ExitFailure code -> throw $ GitExecException code Nothing Nothing
 
 gitInteractiveRepoCmd
-    :: Members '[Process, Error GitException] r
+    :: Members '[Process , Error GitException] r
     => GitRepository
     -> [Text]
     -> Sem r ()
@@ -178,10 +178,22 @@ newtype RepositoryOwner = RepositoryOwner { ownerLogin :: Text }
 
 newtype PullRequestAssignee = PullRequestAssignee { assigneeLogin :: Text }
 newtype PullRequestLabel = PullRequestLabel { labelName :: Text }
-data PullRequest = PullRequest { pullRequestNumber :: Int, pullRequestAssignees :: [PullRequestAssignee], pullRequestLabels :: [PullRequestLabel] }
+data PullRequest = PullRequest
+    { pullRequestNumber    :: Int
+    , pullRequestAssignees :: [PullRequestAssignee]
+    , pullRequestLabels    :: [PullRequestLabel]
+    }
 
-data PullRequestInputPayload = PullRequestInputPayload { pullRequestHead :: Text, pullRequestBase :: Text, setPullRequestTitle :: Maybe Text, setPullRequestState :: Maybe Text }
-data IssueInputPayload = IssueInputPayload { setIssueAssignees :: [Text], setIssueLabels :: [Text] }
+data PullRequestInputPayload = PullRequestInputPayload
+    { pullRequestHead     :: Text
+    , pullRequestBase     :: Text
+    , setPullRequestTitle :: Maybe Text
+    , setPullRequestState :: Maybe Text
+    }
+data IssueInputPayload = IssueInputPayload
+    { setIssueAssignees :: [Text]
+    , setIssueLabels    :: [Text]
+    }
 
 instance Pretty Committish where
     pretty (Committish c) = pretty c
@@ -296,7 +308,7 @@ hubOwnerQuery :: Text
 hubOwnerQuery = $(embedStringFile "src/Tenpureto/Effects/Git/owner.graphql")
 
 hubApiFindPullRequest
-    :: Members '[Process, Error GitException] r
+    :: Members '[Process , Error GitException] r
     => GitRepository
     -> Text
     -> Text

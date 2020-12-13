@@ -8,39 +8,38 @@ module Tenpureto.FeatureMerger
     , runMergeGraph
     , listMergeCombinations
     , runPropagateGraph
-    )
-where
+    ) where
 
 import           Polysemy
 import           Polysemy.Output
 import           Polysemy.State
 
-import           Data.Maybe
+import           Algebra.Graph.ToGraph
+import           Control.Monad
+import           Data.Functor
 import           Data.List
+import qualified Data.Map                      as Map
+import           Data.Maybe
 import           Data.Set                       ( Set )
 import qualified Data.Set                      as Set
-import qualified Data.Map                      as Map
-import           Data.Functor
-import           Control.Monad
-import           Algebra.Graph.ToGraph
 
-import           Tenpureto.Messages
+import           Tenpureto.Effects.Git
+import           Tenpureto.Effects.Terminal
+import           Tenpureto.Effects.UI
+import           Tenpureto.FeatureMerger.Internal
 import           Tenpureto.Graph
+import           Tenpureto.MergeOptimizer
+import           Tenpureto.Messages
 import           Tenpureto.OrderedSet           ( OrderedSet )
 import qualified Tenpureto.OrderedSet          as OrderedSet
 import           Tenpureto.TemplateLoader
-import           Tenpureto.MergeOptimizer
-import           Tenpureto.Effects.Git
-import           Tenpureto.Effects.UI
-import           Tenpureto.Effects.Terminal
-import           Tenpureto.FeatureMerger.Internal
 
 data MergeRecord = CheckoutRecord Text
                  | MergeRecord Text Text Text
     deriving (Show, Eq)
 
 mergeCommits
-    :: Members '[Git, UI, Terminal] r
+    :: Members '[Git , UI , Terminal] r
     => GitRepository
     -> MergeElement
     -> MergeElement
@@ -90,7 +89,7 @@ withMergeCache :: Sem (State MergeCache ': r) a -> Sem r a
 withMergeCache = fmap snd . runState mempty
 
 runMergeGraph
-    :: Members '[Git, UI, Terminal, State MergeCache] r
+    :: Members '[Git , UI , Terminal , State MergeCache] r
     => GitRepository
     -> Graph TemplateBranchInformation
     -> Set TemplateBranchInformation
@@ -180,14 +179,15 @@ listMergeCombinations graph =
         <$> combinations
 
 data PropagatePushMode = PropagatePushMerged | PropagatePushSeparately
-data PropagateData = PropagateData { propagateCurrentCommit :: Committish
-                                   , propagateUpstreamCommit :: Committish
-                                   , propagateBranchName :: Text
-                                   }
-                        deriving (Eq, Ord, Show)
+data PropagateData = PropagateData
+    { propagateCurrentCommit  :: Committish
+    , propagateUpstreamCommit :: Committish
+    , propagateBranchName     :: Text
+    }
+    deriving (Eq, Ord, Show)
 
 runPropagateGraph
-    :: Members '[Git, Terminal, State MergeCache] r
+    :: Members '[Git , Terminal , State MergeCache] r
     => GitRepository
     -> PropagatePushMode
     -> Graph TemplateBranchInformation

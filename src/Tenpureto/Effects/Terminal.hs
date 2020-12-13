@@ -6,21 +6,20 @@ module Tenpureto.Effects.Terminal
     , module Data.Text.Prettyprint.Doc
     , Text
     , AnsiStyle
-    )
-where
+    ) where
 
 import           Polysemy
-import           Polysemy.State
 import           Polysemy.Resource
+import           Polysemy.State
 
 import           Data.Bool
+import           Data.IORef
 import           Data.Text                      ( Text )
 import           Data.Text.Prettyprint.Doc
 import           Data.Text.Prettyprint.Doc.Render.Terminal
-import           Data.IORef
 
-import           System.IO                      ( stdout )
 import           System.Console.ANSI            ( hSupportsANSI )
+import           System.IO                      ( stdout )
 
 import           Tenpureto.Effects.Terminal.Internal
 
@@ -49,7 +48,7 @@ confirm msg def = askUntil Nothing request process
     mapAnswer p   = Left (Just p)
 
 traverseWithProgressBar
-    :: (Members '[Terminal, Resource] r, Traversable t)
+    :: (Members '[Terminal , Resource] r, Traversable t)
     => (a -> Doc AnsiStyle)
     -> (a -> Sem r b)
     -> t a
@@ -65,8 +64,7 @@ traverseWithProgressBar info action tasks =
     in  traverseWithIndex fullAction tasks
 
 runTerminalIOOutput
-    :: Member (Embed IO) r
-    => IO (Sem (Terminal ': r) a -> Sem r a)
+    :: Member (Embed IO) r => IO (Sem (Terminal ': r) a -> Sem r a)
 runTerminalIOOutput = do
     ioRef        <- newIORef (TemporaryHeight 0)
     supportsANSI <- hSupportsANSI stdout

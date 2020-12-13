@@ -3,9 +3,9 @@ module TenpuretoTest where
 import           Test.Tasty
 import           Test.Tasty.HUnit
 
+import           Tenpureto.Effects.Git          ( Committish(..) )
 import           Tenpureto.Messages
 import qualified Tenpureto.OrderedMap          as OrderedMap
-import           Tenpureto.Effects.Git          ( Committish(..) )
 
 import           Tenpureto
 

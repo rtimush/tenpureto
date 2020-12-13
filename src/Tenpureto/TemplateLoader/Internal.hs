@@ -1,30 +1,30 @@
 module Tenpureto.TemplateLoader.Internal where
 
-import           Data.Maybe
+import           Control.Applicative            ( (<|>) )
 import           Data.List
-import qualified Data.Text                     as T
-import           Data.Set                       ( Set )
-import qualified Data.Set                      as Set
 import           Data.Map                       ( Map )
 import qualified Data.Map                      as Map
+import           Data.Maybe
+import           Data.Set                       ( Set )
+import qualified Data.Set                      as Set
+import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc
-import           Data.Yaml.Builder              ( ToYaml(..)
+import           Data.Yaml.Builder              ( (.=)
+                                                , ToYaml(..)
                                                 , YamlBuilder
-                                                , string
                                                 , mapping
-                                                , (.=)
+                                                , string
                                                 )
-import           Data.Yaml.Parser               ( FromYaml(..)
+import           Data.Yaml.Parser               ( (.:)
+                                                , FromYaml(..)
                                                 , YamlParser
                                                 , YamlValue
-                                                , withText
                                                 , withMapping
-                                                , (.:)
+                                                , withText
                                                 )
-import           Control.Applicative            ( (<|>) )
 
-import           Tenpureto.Graph
 import           Tenpureto.Effects.Git
+import           Tenpureto.Graph
 import           Tenpureto.OrderedMap           ( OrderedMap )
 import qualified Tenpureto.OrderedMap          as OrderedMap
 import           Tenpureto.Orphanage            ( )
@@ -33,29 +33,29 @@ data FeatureStability = Deprecated | Experimental | Stable
         deriving (Show, Eq, Ord, Enum, Bounded)
 
 data TemplateYamlFeature = TemplateYamlFeature
-        { yamlFeatureName :: Text
-        , yamlFeatureDescription :: Maybe Text
-        , yamlFeatureHidden :: Bool
-        , yamlFeatureStability :: FeatureStability
-        }
-        deriving (Show, Eq, Ord)
+    { yamlFeatureName        :: Text
+    , yamlFeatureDescription :: Maybe Text
+    , yamlFeatureHidden      :: Bool
+    , yamlFeatureStability   :: FeatureStability
+    }
+    deriving (Show, Eq, Ord)
 
 data TemplateYaml = TemplateYaml
-        { yamlVariables :: OrderedMap Text Text
-        , yamlFeatures :: Set TemplateYamlFeature
-        , yamlExcludes :: Set Text
-        , yamlConflicts :: Set Text
-        }
-        deriving (Show, Eq, Ord)
+    { yamlVariables :: OrderedMap Text Text
+    , yamlFeatures  :: Set TemplateYamlFeature
+    , yamlExcludes  :: Set Text
+    , yamlConflicts :: Set Text
+    }
+    deriving (Show, Eq, Ord)
 
 data TemplateInformation = TemplateInformation
     { branchesInformation :: [TemplateBranchInformation]
-    , branchesGraph :: Graph TemplateBranchInformation
+    , branchesGraph       :: Graph TemplateBranchInformation
     }
     deriving Show
 
 data TemplateBranchInformation = TemplateBranchInformation
-    { branchName :: Text
+    { branchName   :: Text
     , branchCommit :: Committish
     , templateYaml :: TemplateYaml
     }
@@ -198,7 +198,7 @@ commutativeConflicts
     :: [TemplateBranchInformation] -> [TemplateBranchInformation]
 commutativeConflicts bis =
     let conflictsMap =
-                Map.fromList [ (branchName b, branchConflicts b) | b <- bis ]
+            Map.fromList [ (branchName b, branchConflicts b) | b <- bis ]
         transposedMap = transposeMapSet conflictsMap
     in  [ TemplateBranchInformation
               { branchName   = branchName b
@@ -250,5 +250,5 @@ templateInformation :: [TemplateBranchInformation] -> TemplateInformation
 templateInformation branches =
     let isManagedBranch b = isFeatureBranch b || isMergeBranch' branches b
         enrichedBranches =
-                (commutativeConflicts . filter isManagedBranch) branches
+            (commutativeConflicts . filter isManagedBranch) branches
     in  TemplateInformation enrichedBranches (buildGraph enrichedBranches)

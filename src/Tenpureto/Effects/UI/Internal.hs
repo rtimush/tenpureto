@@ -4,29 +4,29 @@ module Tenpureto.Effects.UI.Internal where
 
 import           Polysemy
 
-import           Data.Maybe
+import           Algebra.Graph.ToGraph
+import           Data.Functor
+import           Data.Functor.Identity
 import           Data.List
-import qualified Data.Text                     as T
+import           Data.Maybe
 import           Data.Set                       ( Set )
 import qualified Data.Set                      as Set
-import           Data.Functor
+import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc.Render.Terminal
-import           Algebra.Graph.ToGraph
-import           Data.Functor.Identity
 
-import           Tenpureto.Graph
-import           Tenpureto.TemplateLoader
-import           Tenpureto.MergeOptimizer
-import           Tenpureto.Effects.Terminal
 import           Tenpureto.Effects.FileSystem
+import           Tenpureto.Effects.Terminal
+import           Tenpureto.Graph
+import           Tenpureto.MergeOptimizer
 import           Tenpureto.OrderedMap           ( OrderedMap )
 import qualified Tenpureto.OrderedMap          as OrderedMap
+import           Tenpureto.TemplateLoader
 
 
 inputTemplate :: Member TerminalInput r => Sem r Text
 inputTemplate = ask "Template URL:" Nothing
 
-inputTarget :: Members '[TerminalInput, FileSystem] r => Sem r (Path Abs Dir)
+inputTarget :: Members '[TerminalInput , FileSystem] r => Sem r (Path Abs Dir)
 inputTarget = ask "Target directory:" Nothing <&> T.unpack >>= resolveDir
 
 templateBranchesByNames
@@ -139,7 +139,7 @@ type InputBranchState
     = ([TemplateBranchInformation], Set TemplateBranchInformation, Maybe Text)
 
 inputBranches
-    :: Members '[Terminal, TerminalInput] r
+    :: Members '[Terminal , TerminalInput] r
     => Graph TemplateBranchInformation
     -> Set Text
     -> Sem r (Set TemplateBranchInformation)

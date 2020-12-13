@@ -3,37 +3,37 @@ module Tenpureto.Templater where
 import           Polysemy
 import           Polysemy.Resource
 
+import           Control.Monad
+import           Data.Attoparsec.Text
 import           Data.ByteString                ( ByteString )
-import           Data.List
-import qualified Data.Text                     as T
-import           Data.Set                       ( Set )
-import qualified Data.Set                      as Set
-import           Data.Maybe
 import           Data.Foldable
 import           Data.Functor
-import           Control.Monad
+import           Data.List
+import           Data.Maybe
+import           Data.Set                       ( Set )
+import qualified Data.Set                      as Set
+import qualified Data.Text                     as T
 import           Data.Text.Encoding
-import           Data.Attoparsec.Text
 import           Replace.Attoparsec.Text
 import           System.FilePattern
 
-import           Tenpureto.Effects.Logging
 import           Tenpureto.Effects.FileSystem
 import           Tenpureto.Effects.Git
-import           Tenpureto.Templater.CaseConversion
+import           Tenpureto.Effects.Logging
 import           Tenpureto.OrderedMap           ( OrderedMap )
 import qualified Tenpureto.OrderedMap          as OrderedMap
 import           Tenpureto.Orphanage            ( )
+import           Tenpureto.Templater.CaseConversion
 
 
 data TemplaterSettings = TemplaterSettings
     { templaterFromVariables :: OrderedMap Text Text
-    , templaterToVariables :: OrderedMap Text Text
-    , templaterExcludes :: Set Text
+    , templaterToVariables   :: OrderedMap Text Text
+    , templaterExcludes      :: Set Text
     }
 
 data CompiledTemplaterSettings = CompiledTemplaterSettings
-    { translate :: Text -> Text
+    { translate     :: Text -> Text
     , shouldExclude :: Path Rel File -> Bool
     }
 
@@ -133,13 +133,13 @@ compileExcludes :: Set Text -> Path Rel File -> Bool
 compileExcludes excludes =
     let handleLeadingSlash p = fromMaybe ("**/" <> p) (T.stripPrefix "/" p)
         handleTrailingSlash p =
-                maybe (p <> "/**") (<> "/**/*") (T.stripSuffix "/" p)
+            maybe (p <> "/**") (<> "/**/*") (T.stripSuffix "/" p)
         matches =
-                (?==)
-                    .   T.unpack
-                    .   handleLeadingSlash
-                    .   handleTrailingSlash
-                    <$> Set.toList excludes
+            (?==)
+                .   T.unpack
+                .   handleLeadingSlash
+                .   handleTrailingSlash
+                <$> Set.toList excludes
         fab ?? a = fmap ($ a) fab
     in  or . (??) matches . fromRelFile
 

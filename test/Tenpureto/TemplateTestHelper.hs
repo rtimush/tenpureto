@@ -1,12 +1,12 @@
 module Tenpureto.TemplateTestHelper where
 
-import           Data.Text                      ( Text )
 import qualified Data.Set                      as Set
+import           Data.Text                      ( Text )
 
-import qualified Tenpureto.OrderedMap          as OrderedMap
 import           Tenpureto.Effects.Git          ( Committish(..) )
-import           Tenpureto.TemplateLoader       ( TemplateBranchInformation(..)
-                                                , FeatureStability(..)
+import qualified Tenpureto.OrderedMap          as OrderedMap
+import           Tenpureto.TemplateLoader       ( FeatureStability(..)
+                                                , TemplateBranchInformation(..)
                                                 , requiredBranches
                                                 )
 import           Tenpureto.TemplateLoader.Internal

@@ -15,34 +15,36 @@ module Tenpureto.Graph
     , GraphSubsetDecision(..)
     , graphSubset
     , graphAncestors
-    )
-where
+    ) where
 
-import           Data.Maybe
-import qualified Data.Set                      as Set
-import qualified Data.Map                      as Map
 import qualified Algebra.Graph                 as G
-import           Algebra.Graph.ToGraph          ( ToVertex
-                                                , ToGraph
-                                                , toGraph
-                                                , toAdjacencyMap
-                                                , toAdjacencyMapTranspose
-                                                , adjacencyMap
-                                                , dfs
-                                                )
+import           Algebra.Graph.AdjacencyMap.Algorithm
+                                                ( scc )
 import qualified Algebra.Graph.NonEmpty.AdjacencyMap
                                                as NAM
+import           Algebra.Graph.ToGraph          ( ToGraph
+                                                , ToVertex
+                                                , adjacencyMap
+                                                , dfs
+                                                , toAdjacencyMap
+                                                , toAdjacencyMapTranspose
+                                                , toGraph
+                                                )
+import           Control.Monad.Memo
+import           Data.Functor
+import           Data.Functor.Identity
 import           Data.List.NonEmpty             ( NonEmpty(..)
                                                 , nonEmpty
                                                 )
-import           Algebra.Graph.AdjacencyMap.Algorithm
-                                                ( scc )
+import qualified Data.Map                      as Map
+import           Data.Maybe
 import           Data.Semigroup.Foldable
-import           Data.Functor
-import           Data.Functor.Identity
-import           Control.Monad.Memo
+import qualified Data.Set                      as Set
 
-data Graph a = Graph { unGraph :: G.Graph a, graphNormalized :: G.Graph a }
+data Graph a = Graph
+    { unGraph         :: G.Graph a
+    , graphNormalized :: G.Graph a
+    }
 
 instance Show a => Show (Graph a) where
     showsPrec i g = showParen

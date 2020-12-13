@@ -8,44 +8,43 @@ module Tenpureto.MergeOptimizer
     , mergeBranchesGraph
     , mergeGraph
     , propagateBranchesGraph
-    )
-where
+    ) where
 
+import           Control.Monad
 import           Data.Maybe
-import           Data.Text                      ( Text )
+import           Data.Semigroup.Foldable
 import qualified Data.Set                      as Set
 import           Data.Set                       ( Set )
-import           Data.Semigroup.Foldable
-import           Control.Monad
+import           Data.Text                      ( Text )
 
 import           Tenpureto.Graph
+import           Tenpureto.OrderedMap           ( OrderedMap )
+import qualified Tenpureto.OrderedMap          as OrderedMap
 import           Tenpureto.TemplateLoader       ( TemplateBranchInformation(..)
                                                 , TemplateYaml(..)
                                                 , TemplateYamlFeature
+                                                , branchVariables
                                                 , isFeatureBranch
                                                 , isHiddenBranch
-                                                , branchVariables
                                                 )
-import           Tenpureto.OrderedMap           ( OrderedMap )
-import qualified Tenpureto.OrderedMap          as OrderedMap
 
 data MergedBranchInformation a = MergedBranchInformation
-    { mergedBranchMeta :: a
+    { mergedBranchMeta       :: a
     , mergedBranchDescriptor :: MergedBranchDescriptor
     }
     deriving (Show, Eq, Ord, Functor)
 
 data MergedBranchDescriptor = MergedBranchDescriptor
     { mergedBranchName :: Text
-    , mergedVariables :: OrderedMap Text Text
-    , mergedExcludes :: Set Text
-    , mergedConflicts :: Set Text
-    , mergedFeatures :: Set TemplateYamlFeature
+    , mergedVariables  :: OrderedMap Text Text
+    , mergedExcludes   :: Set Text
+    , mergedConflicts  :: Set Text
+    , mergedFeatures   :: Set TemplateYamlFeature
     }
     deriving (Show, Eq, Ord)
 
 data MergeBranchesResult a = MergeBranchesResult
-    { mergeBranchesResultMeta :: a
+    { mergeBranchesResultMeta         :: a
     , mergeBranchesResultTemplateYaml :: TemplateYaml
     }
     deriving (Show, Eq)

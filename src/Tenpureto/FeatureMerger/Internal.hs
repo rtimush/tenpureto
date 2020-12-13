@@ -4,17 +4,17 @@ import           Data.Map                       ( Map )
 import           Data.Text.Prettyprint.Doc
 import           Data.Text.Prettyprint.Doc.Render.Text
 
-import           Tenpureto.OrderedSet           ( OrderedSet )
 import           Tenpureto.Effects.Git
+import           Tenpureto.OrderedSet           ( OrderedSet )
 
 data Tree a = Leaf a
             | Node a [Tree a]
             deriving (Eq, Ord)
 
 data MergeElement = MergeElement
-    { mergeHead :: Committish
-    , mergeName :: Text
-    , mergeTree :: Tree Text
+    { mergeHead  :: Committish
+    , mergeName  :: Text
+    , mergeTree  :: Tree Text
     , mergeHeads :: OrderedSet Committish
     }
     deriving (Eq, Ord)

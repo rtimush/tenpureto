@@ -4,15 +4,14 @@ module Tenpureto.Effects.Logging
     ( module Tenpureto.Effects.Logging
     , module Data.Text.Prettyprint.Doc
     , Severity(..)
-    )
-where
+    ) where
 
 import           Polysemy
 
 import           Data.Text.Prettyprint.Doc
 
-import           Tenpureto.Effects.Terminal
 import           Tenpureto.Effects.Logging.Internal
+import           Tenpureto.Effects.Terminal
 
 data Logging m a where
     LogInfo ::Doc () -> Logging m ()

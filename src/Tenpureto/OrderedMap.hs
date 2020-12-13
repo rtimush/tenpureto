@@ -12,33 +12,33 @@ module Tenpureto.OrderedMap
     , union
     , Tenpureto.OrderedMap.lookup
     , intersectionWith
-    )
-where
+    ) where
 
-import           Data.Text                      ( Text )
 import           Data.Map                       ( Map )
 import qualified Data.Map                      as Map
-import           Data.Yaml.Parser               ( FromYaml(..)
-                                                , YamlValue
-                                                , YamlParser
-                                                , withMapping
-                                                )
-import           Data.Yaml.Builder              ( ToYaml(..)
-                                                , mapping
-                                                , (.=)
-                                                )
+import           Data.Text                      ( Text )
 import           Data.Text.Prettyprint.Doc      ( Pretty
-                                                , pretty
-                                                , group
                                                 , encloseSep
+                                                , group
+                                                , pretty
+                                                )
+import           Data.Yaml.Builder              ( (.=)
+                                                , ToYaml(..)
+                                                , mapping
+                                                )
+import           Data.Yaml.Parser               ( FromYaml(..)
+                                                , YamlParser
+                                                , YamlValue
+                                                , withMapping
                                                 )
 import           Tenpureto.OrderedSet           ( OrderedSet )
 import qualified Tenpureto.OrderedSet          as OrderedSet
 
-data OrderedMap a b = OrderedMap { keySet :: OrderedSet a
-                                 , toMap :: Map a b
-                                 }
-                                 deriving (Eq, Ord)
+data OrderedMap a b = OrderedMap
+    { keySet :: OrderedSet a
+    , toMap  :: Map a b
+    }
+    deriving (Eq, Ord)
 
 fromList :: (Eq a, Ord a) => [(a, b)] -> OrderedMap a b
 fromList kv = OrderedMap { keySet = OrderedSet.fromList (fmap fst kv)

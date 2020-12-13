@@ -6,18 +6,18 @@ import           Polysemy
 import           Polysemy.Error
 
 import           Data.Bool
+import           Data.Foldable
 import           Data.Maybe
 import qualified Data.Set                      as Set
-import           Data.Foldable
 
 import           Tenpureto.Data
-import           Tenpureto.Messages
-import           Tenpureto.TemplateLoader
-import qualified Tenpureto.OrderedMap          as OrderedMap
-import           Tenpureto.Effects.Git          ( BranchRef )
 import           Tenpureto.Effects.FileSystem
+import           Tenpureto.Effects.Git          ( BranchRef )
 import           Tenpureto.Effects.Terminal
 import           Tenpureto.Effects.UI.Internal
+import           Tenpureto.Messages
+import qualified Tenpureto.OrderedMap          as OrderedMap
+import           Tenpureto.TemplateLoader
 
 data UIException = UnattendedNotPossible Text
                  | NoBaseBranchesException
@@ -45,7 +45,7 @@ data UI m a where
 makeSem ''UI
 
 runUIInTerminal
-    :: Members '[FileSystem, Error UIException, Terminal, TerminalInput] r
+    :: Members '[FileSystem , Error UIException , Terminal , TerminalInput] r
     => Sem (UI ': r) a
     -> Sem r a
 runUIInTerminal = interpret $ \case

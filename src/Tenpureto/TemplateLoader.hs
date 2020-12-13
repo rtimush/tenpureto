@@ -17,34 +17,33 @@ module Tenpureto.TemplateLoader
     , isHiddenBranch
     , isMergeBranch
     , requiredBranches
-    )
-where
+    ) where
 
 import           Polysemy
 import           Polysemy.Error
 
-import           Data.List
-import           Data.Maybe
-import           Data.Either.Combinators
-import           Data.ByteString.Lazy           ( ByteString )
-import qualified Data.ByteString.Lazy          as BS
-import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc
-import           Data.Set                       ( Set )
-import qualified Data.Set                      as Set
-import           Data.Bifunctor
 import           Control.Exception              ( displayException )
 import           Control.Monad
 import           Control.Monad.Trans.Maybe
+import           Data.Bifunctor
+import           Data.ByteString.Lazy           ( ByteString )
+import qualified Data.ByteString.Lazy          as BS
+import           Data.Either.Combinators
+import           Data.List
+import           Data.Maybe
+import           Data.Set                       ( Set )
+import qualified Data.Set                      as Set
+import qualified Data.Text                     as T
+import           Data.Text.Prettyprint.Doc
 
 import           Path
 
-import           Tenpureto.Graph
 import           Tenpureto.Effects.FileSystem
 import           Tenpureto.Effects.Git
+import           Tenpureto.Graph
+import qualified Tenpureto.OrderedMap          as OrderedMap
 import           Tenpureto.TemplateLoader.Internal
 import           Tenpureto.Yaml
-import qualified Tenpureto.OrderedMap          as OrderedMap
 
 import           Tenpureto.Orphanage            ( )
 
@@ -81,8 +80,9 @@ loadBranchConfiguration
     -> Text
     -> Sem r (Maybe TemplateBranchInformation)
 loadBranchConfiguration repo branch = runMaybeT $ do
-    branchHead <- MaybeT
-        $ findCommitByRef repo (BranchRef $ T.pack "remotes/origin/" <> branch)
+    branchHead <- MaybeT $ findCommitByRef
+        repo
+        (BranchRef $ T.pack "remotes/origin/" <> branch)
     descriptor <- MaybeT $ getRepositoryFile repo branchHead templateYamlFile
     info       <- MaybeT . return . rightToMaybe $ parseTemplateYaml descriptor
     return $ TemplateBranchInformation { branchName   = branch
@@ -91,7 +91,7 @@ loadBranchConfiguration repo branch = runMaybeT $ do
                                        }
 
 loadTemplateYaml
-    :: Members '[FileSystem, Error TemplateLoaderException] r
+    :: Members '[FileSystem , Error TemplateLoaderException] r
     => Path Abs File
     -> Sem r TemplateYaml
 loadTemplateYaml file =
@@ -132,7 +132,8 @@ findTemplateBranch
 findTemplateBranch template branch =
     find ((==) branch . branchName) (branchesInformation template)
 
-getBranchParents :: TemplateInformation -> TemplateBranchInformation -> Set Text
+getBranchParents
+    :: TemplateInformation -> TemplateBranchInformation -> Set Text
 getBranchParents template branch =
     let isAncestor b a
             | isFeatureBranch a

@@ -2,22 +2,22 @@
 
 module Tenpureto.Effects.Terminal.Internal where
 
+import           Control.Monad
+import           Data.Functor
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc
 import           Data.Text.Prettyprint.Doc.Render.Terminal
-import           Data.Functor
 import           Data.Traversable
-import           Control.Monad
 
-import           System.IO                      ( stdout
-                                                , hFlush
-                                                )
-import           System.Console.ANSI            ( cursorUp
+import           System.Console.ANSI            ( clearFromCursorToScreenEnd
+                                                , cursorUp
                                                 , setCursorColumn
-                                                , clearFromCursorToScreenEnd
                                                 )
 import qualified System.Console.Terminal.Size  as TS
+import           System.IO                      ( hFlush
+                                                , stdout
+                                                )
 
 newtype TemporaryHeight = TemporaryHeight Int
 

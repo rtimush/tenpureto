@@ -2,14 +2,14 @@
 
 module Tenpureto.Templater.CaseConversion where
 
+import           Control.Applicative
+import           Data.Attoparsec.Text
+import           Data.Bifunctor
 import           Data.Char
+import           Data.Either.Combinators        ( rightToMaybe )
+import           Data.Maybe
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
-import           Data.Maybe
-import           Data.Either.Combinators        ( rightToMaybe )
-import           Data.Bifunctor
-import           Data.Attoparsec.Text
-import           Control.Applicative
 import           GHC.Generics
 
 data WordCase = LowerCase | UpperCase | TitleCase | MixedCase

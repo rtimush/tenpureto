@@ -6,27 +6,27 @@ import           Control.Applicative
 
 import           Tenpureto.Effects.Git
 import           Tenpureto.Effects.Logging
-import           Tenpureto.TemplateLoader
 import           Tenpureto.OrderedMap           ( OrderedMap )
 import qualified Tenpureto.OrderedMap          as OrderedMap
 import           Tenpureto.Orphanage            ( )
+import           Tenpureto.TemplateLoader
 
 data PreliminaryProjectConfiguration = PreliminaryProjectConfiguration
-        { preSelectedTemplate :: Maybe Text
-        , preTargetDirectory :: Maybe (Path Abs Dir)
-        , prePreviousTemplateCommit :: Maybe ParentCommit
-        , preSelectedBranches :: Maybe (Set Text)
-        , preVariableValues :: Maybe (OrderedMap Text Text)
-        , preVariableDefaultReplacements :: OrderedMap Text Text
-        , prePreviousMergedHeads :: Maybe [Committish]
-        }
-        deriving (Show)
+    { preSelectedTemplate            :: Maybe Text
+    , preTargetDirectory             :: Maybe (Path Abs Dir)
+    , prePreviousTemplateCommit      :: Maybe ParentCommit
+    , preSelectedBranches            :: Maybe (Set Text)
+    , preVariableValues              :: Maybe (OrderedMap Text Text)
+    , preVariableDefaultReplacements :: OrderedMap Text Text
+    , prePreviousMergedHeads         :: Maybe [Committish]
+    }
+    deriving Show
 
 data FinalTemplateConfiguration = FinalTemplateConfiguration
-        { selectedTemplate :: Text
-        , targetDirectory :: Path Abs Dir
-        }
-        deriving (Show)
+    { selectedTemplate :: Text
+    , targetDirectory  :: Path Abs Dir
+    }
+    deriving Show
 
 newtype FinalUpdateConfiguration = FinalUpdateConfiguration
         { previousTemplateCommit :: ParentCommit
@@ -34,10 +34,10 @@ newtype FinalUpdateConfiguration = FinalUpdateConfiguration
         deriving (Show)
 
 data FinalProjectConfiguration = FinalProjectConfiguration
-        { projectBranches :: [TemplateBranchInformation]
-        , variableValues :: OrderedMap Text Text
-        }
-        deriving (Show)
+    { projectBranches :: [TemplateBranchInformation]
+    , variableValues  :: OrderedMap Text Text
+    }
+    deriving Show
 
 
 instance Semigroup PreliminaryProjectConfiguration where

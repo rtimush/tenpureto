@@ -2,24 +2,24 @@
 
 module Tenpureto.GraphTest where
 
-import           Test.Tasty
-import           Test.Tasty.HUnit
-import           Test.Tasty.Hedgehog
 import           Hedgehog
 import qualified Hedgehog.Gen                  as Gen
 import qualified Hedgehog.Range                as Range
+import           Test.Tasty
+import           Test.Tasty.HUnit
+import           Test.Tasty.Hedgehog
 
-import           Data.Ix
-import           Data.List
-import           Data.Text                      ( Text )
-import           Data.Set                       ( Set )
-import qualified Data.Set                      as Set
-import qualified Data.Map                      as Map
 import           Algebra.Graph.ToGraph
+import           Control.Monad.Trans.State
 import           Data.Foldable
 import           Data.Functor
 import           Data.Functor.Identity
-import           Control.Monad.Trans.State
+import           Data.Ix
+import           Data.List
+import qualified Data.Map                      as Map
+import           Data.Set                       ( Set )
+import qualified Data.Set                      as Set
+import           Data.Text                      ( Text )
 
 import           Tenpureto.Graph
 
@@ -136,18 +136,17 @@ test_graphSubset =
                 )
                 (path ["a", "b"])
         @?= path @Text ["a"]
-    , testCase
-            "handle interleaving PreferKeep and PreferDrop"
-            $graphSubset
-            (\case
-                "a" -> MustKeep
-                "b" -> MustDrop
-                "c" -> PreferKeep
-                "d" -> PreferKeep
-                "f" -> PreferKeep
-                _   -> PreferDrop
-            )
-            (path ["a", "b", "c", "d", "e", "f"])
+    , testCase "handle interleaving PreferKeep and PreferDrop"
+        $   graphSubset
+                (\case
+                    "a" -> MustKeep
+                    "b" -> MustDrop
+                    "c" -> PreferKeep
+                    "d" -> PreferKeep
+                    "f" -> PreferKeep
+                    _   -> PreferDrop
+                )
+                (path ["a", "b", "c", "d", "e", "f"])
         @?= path @Text ["a"]
     , testCase
             "keeps children of kept vertices if grandchildren dropped when keeping is prefered"
@@ -178,7 +177,8 @@ test_graphSubset =
                 )
                 (overlay (path ["a", "c"]) (path ["b", "c"]))
         @?= path @Text ["b"]
-    , testProperty "respect vertex decisions" propertyGraphSubsetRespectsDecisions
+    , testProperty "respect vertex decisions"
+                   propertyGraphSubsetRespectsDecisions
     ]
 
 propertyGraphSubsetRespectsDecisions :: Property

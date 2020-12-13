@@ -14,28 +14,27 @@ module Tenpureto.Effects.Git
     , Dir
     , File
     , parseRepositoryUri
-    )
-where
+    ) where
 
 import           Polysemy
 import           Polysemy.Error
 import           Polysemy.Resource
 
-import           Data.Maybe
 import           Data.ByteString.Lazy           ( ByteString )
 import qualified Data.ByteString.Lazy          as BS
-import           Data.Text                      ( Text )
-import qualified Data.Text                     as T
 import           Data.Functor
 import           Data.List
+import           Data.Maybe
+import           Data.Text                      ( Text )
+import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc
 import           System.Random
 
 import           Path
 
 import           Tenpureto.Effects.FileSystem
-import           Tenpureto.Effects.Process
 import           Tenpureto.Effects.Git.Internal
+import           Tenpureto.Effects.Process
 
 newtype BranchRef = BranchRef { reference :: Text } deriving (Eq, Ord, Show)
 
@@ -45,10 +44,11 @@ data PushSpec = CreateBranch { sourceCommit :: Committish, destinationRef :: Bra
               | CloseBranchUpdate { pullRequestRef :: BranchRef, destinationRef :: BranchRef }
               deriving (Eq, Ord, Show)
 
-data PullRequestSettings = PullRequestSettings { pullRequestAddLabels :: [Text]
-                                               , pullRequestAssignTo :: [Text]
-                                               , pullRequestPreMerge :: Bool
-                                               }
+data PullRequestSettings = PullRequestSettings
+    { pullRequestAddLabels :: [Text]
+    , pullRequestAssignTo  :: [Text]
+    , pullRequestPreMerge  :: Bool
+    }
 
 data MergeStrategy = MergeNoFastForward
                    | MergeAllowFastForward
@@ -112,7 +112,7 @@ withRepository
 withRepository path f = f (GitRepository path)
 
 withClonedRepository
-    :: Members '[Resource, FileSystem, Git] r
+    :: Members '[Resource , FileSystem , Git] r
     => RepositoryLocation
     -> (GitRepository -> Sem r a)
     -> Sem r a
@@ -122,7 +122,7 @@ withClonedRepository location f = withSystemTempDir "tenpureto" $ \dir -> do
     f repo
 
 withNewWorktree
-    :: Members '[Resource, FileSystem, Git] r
+    :: Members '[Resource , FileSystem , Git] r
     => GitRepository
     -> ParentCommit
     -> (GitRepository -> Sem r a)
@@ -134,7 +134,7 @@ withNewWorktree repo c f = do
         (\(worktree, _) -> f worktree)
 
 runGit
-    :: Members '[FileSystem, Process, Error GitException, Embed IO] r
+    :: Members '[FileSystem , Process , Error GitException , Embed IO] r
     => Sem (Git ': r) a
     -> Sem r a
 runGit = interpret $ \case
@@ -324,7 +324,7 @@ runGit = interpret $ \case
 
 
 runGitHub
-    :: Members '[Git, Process, Error GitException] r
+    :: Members '[Git , Process , Error GitException] r
     => Sem (GitServer ': r) a
     -> Sem r a
 runGitHub = interpret $ \case

@@ -3,11 +3,15 @@ module Tenpureto.FeatureMergerTest where
 import           Test.Tasty
 import           Test.Tasty.HUnit
 
-import           Data.Text                      ( Text )
-import qualified Data.Set                      as Set
 import           Algebra.Graph.ToGraph
+import qualified Data.Set                      as Set
+import           Data.Text                      ( Text )
 
+import           Tenpureto.Effects.Git          ( Committish(..) )
+import           Tenpureto.FeatureMerger
 import           Tenpureto.Graph
+import qualified Tenpureto.OrderedMap          as OrderedMap
+import qualified Tenpureto.OrderedSet          as OrderedSet
 import           Tenpureto.TemplateLoader       ( TemplateBranchInformation(..)
                                                 )
 import           Tenpureto.TemplateLoader.Internal
@@ -15,10 +19,6 @@ import           Tenpureto.TemplateLoader.Internal
                                                 , TemplateYaml(..)
                                                 , TemplateYamlFeature(..)
                                                 )
-import           Tenpureto.Effects.Git          ( Committish(..) )
-import qualified Tenpureto.OrderedSet          as OrderedSet
-import qualified Tenpureto.OrderedMap          as OrderedMap
-import           Tenpureto.FeatureMerger
 
 
 v :: Text -> TemplateBranchInformation
